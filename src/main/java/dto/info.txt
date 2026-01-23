@@ -1,0 +1,5 @@
+dto's act as a filter for the service. the service will be
+able to use only what the dtos allow it to use. the dto
+filters what can be used from the model entity. it also
+means that service may use the info from the dto how it
+wants.

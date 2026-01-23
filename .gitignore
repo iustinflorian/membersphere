@@ -1,0 +1,20 @@
+# Compiled code and packages
+target/
+bin/
+out/
+*.class
+*.jar
+*.war
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+.sts4-cache
+
+# Logs and temp
+*.log
+HELP.md
