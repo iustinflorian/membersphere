@@ -3,26 +3,31 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Employee extends User {
+public class Employee extends User implements Displayable {
 
-    public Employee(String username, String password, String email, double phone) {
-        set_username(username);
-        set_password(password);
-        set_email(email);
-        set_phone(phone);
+    private Employee(String username, String password, String email, String phone) {
+        super(username, password, email, phone);
+    }
+    public static Employee createEmployee(String username, String password, String email, String phone) {
+        return new Employee(username, password, email, phone);
     }
 
-    private List<Task> myTasks = new ArrayList<>();
+    private final List<Task> myTasks = new ArrayList<>();
 
-    public void receive_task(Task task) {
-        if (task.get_to().equals(this.get_email())) {
+    // this has to search the (to be implemented) database for that email
+    public void receiveTask(Task task) {
+        if (task.getDestination().equals(this.getEmail())) {
             myTasks.add(task);
         }
     }
 
-    public void get_tasks() {
+    public void getTasks() {
         for (Task task : myTasks){
-            task.get_info();
+            task.showInfo();
         }
+    }
+
+    public void showInfo(){
+
     }
 }

@@ -1,16 +1,21 @@
 package model;
 
-public class Manager extends User {
+public class Manager extends User implements Displayable {
 
-    public Manager(String username, String password, String email, double phone) {
-        set_username(username);
-        set_password(password);
-        set_email(email);
-        set_phone(phone);
+    // this is a factory method
+    private Manager(String username, String password, String email, String phone) {
+        super(username, password, email, phone);
+    }
+    public static Manager createManager(String username, String password, String email, String phone) {
+        return new Manager(username, password, email, phone);
+    }
+    // this is a factory method
+
+    public Task createTask(String title, String details, String employeeEmail, String deadline, boolean completed) {
+        return new Task(title, details, this.getEmail(), employeeEmail, deadline, completed);
     }
 
-    public Task create_task(String title, String details, String employeeEmail, String deadline) {
-        return new Task(title, details, this.get_email(), employeeEmail, deadline);
-    }
+    public void showInfo(){
 
+    }
 }

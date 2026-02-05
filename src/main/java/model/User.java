@@ -1,21 +1,43 @@
 package model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
 public abstract class User {
-    private String _username;
-    private String _email;
-    private double _phone;
-    private long _id;
-    private String _password;
+    private String username;
+    private String email;
+    private String phone;
+    private long id;
+    private String password;
 
-    // setters
-    public void set_username(String username){ _username = username; }
-    public void set_email(String email){ _email = email; }
-    public void set_phone(double phone){ _phone = phone; }
-    public void set_password(String password){ _password = password; }
+    public User(String username, String password, String email, String phone) {
+        this.username = username;
+        this.password = password;
+        setEmail(email);
+        setPhone(phone);
+    }
 
-    // getters
-    public String get_username(){ return _username; }
-    public String get_email(){ return _email; }
-    public double get_phone(){ return _phone; }
-    public long get_id(){ return _id; }
+    // checking if email is similar to the standard pattern
+    public final void setEmail(String email) {
+        if(checkEmail(email)){
+            this.email = email;
+        } else {
+            throw new IllegalArgumentException("Invalid email address");
+        }
+    }
+
+    public boolean checkEmail(String email){
+        String emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        return email != null && email.matches(emailPattern);
+    }
+
+    // checking if phone number is similar to the standard pattern
+    public final void setPhone(String phone) {
+        String phonePattern = "^07\\d{2}\\s\\d{3}\\s\\d{3}$";
+        if (phone == null || !phone.matches(phonePattern)){
+            throw new IllegalArgumentException("Invalid phone number");
+        }
+        this.phone = phone;
+    }
 }
