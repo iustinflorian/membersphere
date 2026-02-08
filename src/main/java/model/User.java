@@ -40,4 +40,8 @@ public abstract class User {
         }
         this.phone = phone;
     }
+
+    public void showInfo(){
+        System.out.println("User email: " + this.getEmail());
+    }
 }

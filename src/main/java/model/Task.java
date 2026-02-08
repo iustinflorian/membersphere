@@ -9,21 +9,25 @@ import lombok.Setter;
 
 @Getter @Setter
 public class Task implements Displayable {
-    private String weight; // task's weight
-    private String source; // manager's email
-    private String destination; // employee's email
+    private long id;
     private String title;
     private String details;
-    private boolean completed;
+    private String source; // Manager's email
+    private String destination; // Employee's email
     private LocalDate deadline;
+    private boolean completed;
 
-    public Task(String title, String details, String source, String destination, String deadline, boolean completed) {
+    private Task(String title, String details, String source, String destination, String deadline) {
         this.title = title;
         this.details = details;
+        if (!checkEmail(source)) throw new IllegalArgumentException("Invalid source email");
         this.source = source;
-        setEmail(destination);
-        this.completed = completed;
+        if (!checkEmail(destination)) throw new IllegalArgumentException("Invalid destination email");
+        this.destination = destination;
         setDeadline(deadline);
+    }
+    public static Task createTask(String title, String details, String source, String destination, String deadline){
+        return new Task(title, details, source, destination, deadline);
     }
 
     public void setDeadline(String deadline) {
@@ -49,15 +53,6 @@ public class Task implements Displayable {
         }
     }
 
-    // checking if email is similar to the standard pattern
-    public final void setEmail(String email) {
-        if(checkEmail(email)){
-            this.destination = email;
-        } else {
-            throw new IllegalArgumentException("Invalid email address");
-        }
-    }
-
     public boolean checkEmail(String email){
         String emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         return email != null && email.matches(emailPattern);
@@ -68,7 +63,6 @@ public class Task implements Displayable {
         System.out.println("The task: -" + getTitle() + "-, has been created.");
         System.out.println("Details: " + getDetails() + ",\nfrom: " + getSource() + ", to: " + getDestination());
         System.out.println("Deadline: " + getDeadline());
-        System.out.println("Importance: " + getWeight());
         System.out.print("Status: ");
         checkCompletion();
     }

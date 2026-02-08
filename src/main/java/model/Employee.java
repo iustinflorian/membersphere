@@ -27,7 +27,8 @@ public class Employee extends User implements Displayable {
         }
     }
 
+    @Override
     public void showInfo(){
-
+        System.out.println("Employee email: " + this.getEmail());
     }
 }

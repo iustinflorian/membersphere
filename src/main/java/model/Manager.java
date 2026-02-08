@@ -11,11 +11,8 @@ public class Manager extends User implements Displayable {
     }
     // this is a factory method
 
-    public Task createTask(String title, String details, String employeeEmail, String deadline, boolean completed) {
-        return new Task(title, details, this.getEmail(), employeeEmail, deadline, completed);
-    }
-
+    @Override
     public void showInfo(){
-
+        System.out.println("Manager email: " + this.getEmail());
     }
 }
