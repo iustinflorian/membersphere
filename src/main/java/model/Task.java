@@ -38,6 +38,10 @@ public class Task implements Displayable {
         }
     }
 
+    public void complete(){
+        this.completed = true;
+    }
+
     public void checkCompletion(){
         if (this.completed) {
             System.out.println("The task has been completed!");

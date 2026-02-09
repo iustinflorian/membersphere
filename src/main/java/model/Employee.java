@@ -12,21 +12,6 @@ public class Employee extends User implements Displayable {
         return new Employee(username, password, email, phone);
     }
 
-    private final List<Task> myTasks = new ArrayList<>();
-
-    // this has to search the (to be implemented) database for that email
-    public void receiveTask(Task task) {
-        if (task.getDestination().equals(this.getEmail())) {
-            myTasks.add(task);
-        }
-    }
-
-    public void getTasks() {
-        for (Task task : myTasks){
-            task.showInfo();
-        }
-    }
-
     @Override
     public void showInfo(){
         System.out.println("Employee email: " + this.getEmail());

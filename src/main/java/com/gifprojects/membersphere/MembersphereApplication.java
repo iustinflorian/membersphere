@@ -1,41 +1,26 @@
 package com.gifprojects.membersphere;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 import dao.TaskDAO;
 import dao.UserDAO;
-import model.Employee;
-import model.Manager;
-import model.Task;
-
-import model.User;
-import org.springframework.boot.SpringApplication;
+import model.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class MembersphereApplication {
 	public static void main(String[] args) {
 
-		/* TEST BAZA DE DATE
-		Connection conn = DatabaseConfig.getConnection();
-		if (conn != null) {
-			System.out.println("Connected to database.");
-		} else {
-			System.err.println("Connection failed!");
-		}
+        /* We will test getTasksByEmail now. */
+		/*
+		Employee a = Employee.createEmployee("John", "123", "john@gmail.com", "0723 223 432");
+		UserDAO.saveUser(a);
+		Manager b = Manager.createManager("Tom", "123", "tom@gmail.com", "0723 213 422");
+		UserDAO.saveUser(b);
+
+		TaskDAO.saveTask(Task.createTask("c", "d","tom@gmail.com","john@gmail.com","2003-11-10"));
+		TaskDAO.saveTask(Task.createTask("h", "i","tom@gmail.com","john@gmail.com","2002-11-10"));
 		*/
 
-		Manager testManager = Manager.createManager("GaitaIustin3", "masina1234", "iustingaita2@gmail.com", "0743 231 222");
-		Employee emp = Employee.createEmployee("AlexNiculae2", "masina123", "alexniculae223@gmail.com", "0765 812 334");
+        TaskDAO.getTasksByEmail("john@gmail.com").forEach(System.out::println);
 
-		UserDAO.getUserByUsername("AlexNiculae2").showInfo();
-
-		String s = testManager.getEmail();
-		String d = emp.getEmail();
-
-		Task task = Task.createTask("test","a", s, d,"2022-10-11");
-		TaskDAO.saveTask(task);
 	}
 }
