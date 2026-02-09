@@ -1,7 +1,8 @@
-package dao;
+package repository;
 
 import com.gifprojects.membersphere.DatabaseConfig;
 import model.Task;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,9 +11,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskDAO {
+@Repository
+public class JdbcTaskRepository implements ITaskRepository{
 
-    public static void saveTask(Task task) {
+    @Override
+    public void saveTask(Task task) {
         String sql = "INSERT INTO tasks (title, details, source, destination, deadline, completed) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -36,14 +39,15 @@ public class TaskDAO {
         }
     }
 
-    public static List<Task> getTasksByEmail(String email){
+    @Override
+    public List<Task> getTasksByEmail(String email){
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM tasks WHERE destination = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setString(1, email);
-            try (ResultSet rs = stmt.executeQuery();){
+            try (ResultSet rs = stmt.executeQuery()){
                 while (rs.next()){
                     tasks.add(
                         Task.createTask(
@@ -51,7 +55,7 @@ public class TaskDAO {
                                 rs.getString("details"),
                                 rs.getString("source"),
                                 rs.getString("destination"),
-                                rs.getString("deadline"))
+                                rs.getDate("deadline").toString())
                     );
                 }
             } catch (SQLException e){
@@ -64,9 +68,28 @@ public class TaskDAO {
         return tasks;
     }
 
-    public static void updateTask(Task task) {}
+    @Override
+    public void updateTask(long taskId, boolean isCompleted) {
+        String sql = "UPDATE tasks SET completed = ? WHERE id = ?";
 
-    public static void deleteTaskById(Long id){
+        try (Connection conn = DatabaseConfig.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql))
+        {
+            stmt.setBoolean(1, isCompleted);
+            stmt.setLong(2, taskId);
+            int rows = stmt.executeUpdate();
+            if (rows > 0){
+                System.out.println("Task has been updated successfully");
+            } else {
+                System.out.println("Task has not been updated");
+            }
+        } catch (SQLException e){
+            System.out.println("Error" + e.getMessage()+". No tasks available.");
+        }
+    }
+
+    @Override
+    public void deleteTaskById(Long id){
         String sql = "DELETE FROM tasks WHERE id = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
