@@ -1,11 +1,11 @@
-package service;
+package com.gifprojects.membersphere.services;
 
-import model.Employee;
-import model.Manager;
-import model.User;
+import com.gifprojects.membersphere.model.Employee;
+import com.gifprojects.membersphere.model.Manager;
+import com.gifprojects.membersphere.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.IUserRepository;
+import com.gifprojects.membersphere.repository.IUserRepository;
 
 @Service
 public class UserService {

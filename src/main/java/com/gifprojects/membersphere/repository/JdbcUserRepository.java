@@ -1,9 +1,9 @@
-package repository;
+package com.gifprojects.membersphere.repository;
 
 import com.gifprojects.membersphere.DatabaseConfig;
-import model.Employee;
-import model.Manager;
-import model.User;
+import com.gifprojects.membersphere.model.Employee;
+import com.gifprojects.membersphere.model.Manager;
+import com.gifprojects.membersphere.model.User;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -108,28 +108,6 @@ public class JdbcUserRepository implements IUserRepository {
             System.out.println("Error" + e.getMessage());
         }
         return null;
-    }
-
-    @Override
-    public void updateUser(User user) {
-        String sql = "UPDATE users SET username = ?, password = ?, email = ?, phone = ? WHERE id = ?";
-
-        try (Connection conn = DatabaseConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, user.getUsername());
-            stmt.setString(2, user.getPassword());
-            stmt.setString(3, user.getEmail());
-            stmt.setString(4, user.getPhone());
-            stmt.setLong(5, user.getId());
-
-            int rowsUpdated = stmt.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("User updated successfully!");
-            }
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
     }
 
     @Override

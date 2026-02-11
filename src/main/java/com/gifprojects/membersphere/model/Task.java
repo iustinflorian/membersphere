@@ -1,14 +1,13 @@
-package model;
+package com.gifprojects.membersphere.model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class Task implements Displayable {
+public class Task {
     private long id;
     private String title;
     private String details;
@@ -38,6 +37,7 @@ public class Task implements Displayable {
         }
     }
 
+/*
     public void complete(){
         this.completed = true;
     }
@@ -56,18 +56,10 @@ public class Task implements Displayable {
             }
         }
     }
+*/
 
     public boolean checkEmail(String email){
         String emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         return email != null && email.matches(emailPattern);
-    }
-
-    @Override
-    public void showInfo(){
-        System.out.println("The task: -" + getTitle() + "-, has been created.");
-        System.out.println("Details: " + getDetails() + ",\nfrom: " + getSource() + ", to: " + getDestination());
-        System.out.println("Deadline: " + getDeadline());
-        System.out.print("Status: ");
-        checkCompletion();
     }
 }

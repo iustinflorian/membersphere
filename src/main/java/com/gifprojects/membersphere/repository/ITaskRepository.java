@@ -1,6 +1,6 @@
-package repository;
+package com.gifprojects.membersphere.repository;
 
-import model.Task;
+import com.gifprojects.membersphere.model.Task;
 
 import java.util.List;
 

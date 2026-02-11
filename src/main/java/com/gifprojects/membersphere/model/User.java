@@ -1,4 +1,4 @@
-package model;
+package com.gifprojects.membersphere.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -39,9 +39,5 @@ public abstract class User {
             throw new IllegalArgumentException("Invalid phone number");
         }
         this.phone = phone;
-    }
-
-    public void showInfo(){
-        System.out.println("User email: " + this.getEmail());
     }
 }

@@ -1,7 +1,7 @@
-package repository;
+package com.gifprojects.membersphere.repository;
 
 import com.gifprojects.membersphere.DatabaseConfig;
-import model.Task;
+import com.gifprojects.membersphere.model.Task;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;

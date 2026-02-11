@@ -1,11 +1,10 @@
-package repository;
+package com.gifprojects.membersphere.repository;
 
-import model.User;
+import com.gifprojects.membersphere.model.User;
 
 public interface IUserRepository {
     void saveUser(User user);
     User getUserByUsername(String username);
     User getUserByEmail(String email);
-    void updateUser(User user);
     void deleteUserById(long id);
 }
