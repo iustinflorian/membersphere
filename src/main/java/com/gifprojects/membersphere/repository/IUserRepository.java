@@ -4,7 +4,8 @@ import com.gifprojects.membersphere.model.User;
 
 public interface IUserRepository {
     void saveUser(User user);
-    User getUserByUsername(String username);
+    User getUserById(long id);
     User getUserByEmail(String email);
-    void deleteUserById(long id);
+    void updateUser(User user);
+    boolean deleteUserById(long id);
 }

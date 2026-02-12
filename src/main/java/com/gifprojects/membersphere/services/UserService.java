@@ -16,7 +16,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void registerUser(String username, String password, String email, String phone, String role){
+    public void registerAccount(String username, String password, String email, String phone, String role){
         User newUser;
 
         if ("MANAGER".equalsIgnoreCase(role)){
@@ -28,18 +28,31 @@ public class UserService {
         userRepository.saveUser(newUser);
     }
 
-    public User loginUser(String username, String password){
-        User user = userRepository.getUserByUsername(username);
+    public User loginAccount(String email, String password){
+        User user = userRepository.getUserByEmail(email);
 
-        if (user != null && user.getPassword().equals(password)){
-            return user;
-        }
-        return null;
+        if (user == null) throw new RuntimeException("User with email: " + email + "not found");
+        if (!user.getPassword().equals(password)) throw new RuntimeException("Password is incorrect!");
+
+        return user;
     }
 
-    public boolean deleteAccount(long id){
-        userRepository.deleteUserById(id);
-        return true;
+    public void updateAccount(long id, String email, String username, String password, String phone){
+        User user = userRepository.getUserById(id);
+
+        if (email!=null) user.setEmail(email);
+        if (username!=null) user.setUsername(username);
+        if (password!=null) user.setPassword(password);
+        if (phone!=null) user.setPhone(phone);
+
+        userRepository.updateUser(user);
+    }
+
+    public void deleteAccount(long id){
+        boolean deleted = userRepository.deleteUserById(id);
+        if (!deleted){
+            throw new RuntimeException("User not found");
+        }
     }
 
 }

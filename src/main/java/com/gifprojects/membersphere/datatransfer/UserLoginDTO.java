@@ -1,4 +1,4 @@
-package com.gifprojects.membersphere.dtobject;
+package com.gifprojects.membersphere.datatransfer;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserLoginDTO {
-    private String username;
+    private String email;
     private String password;
 }

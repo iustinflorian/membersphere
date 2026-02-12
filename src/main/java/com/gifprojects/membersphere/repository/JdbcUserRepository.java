@@ -31,27 +31,20 @@ public class JdbcUserRepository implements IUserRepository {
             else {
                 stmt.setString(5, "Employee");
             }
-            int rows = stmt.executeUpdate();
-            if (rows > 0) {
-                System.out.println("User has been saved successfully");
-            } else {
-                System.out.println("User has not been saved");
-            }
+            stmt.executeUpdate();
         } catch (SQLException e){
             System.out.println("Error" + e.getMessage());
         }
     }
 
     @Override
-    public User getUserByUsername(String username){
-        String sql = "SELECT * FROM users WHERE username = ?";
+    public User getUserById(long id){
+        String sql = "SELECT * FROM users WHERE id = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql))
-        {
-            stmt.setString(1, username);
-            try (ResultSet rs = stmt.executeQuery())
-            {
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()){
                 if (rs.next()){
                     String _role = rs.getString("role");
                     String _username = rs.getString("username");
@@ -59,6 +52,7 @@ public class JdbcUserRepository implements IUserRepository {
                     String _email = rs.getString("email");
                     String _phone = rs.getString("phone");
                     long _id = rs.getLong("id");
+
                     User user;
                     if ("Manager".equals(_role)){
                         user = Manager.createManager(_username, _password, _email, _phone);
@@ -66,11 +60,11 @@ public class JdbcUserRepository implements IUserRepository {
                         user = Employee.createEmployee(_username, _password, _email, _phone);
                     }
                     user.setId(_id);
+
                     return user;
                 }
             }
-        }
-        catch (SQLException e){
+        } catch (SQLException e ){
             System.out.println("Error" + e.getMessage());
         }
         return null;
@@ -93,6 +87,7 @@ public class JdbcUserRepository implements IUserRepository {
                     String _email = rs.getString("email");
                     String _phone = rs.getString("phone");
                     long _id = rs.getLong("id");
+
                     User user;
                     if ("Manager".equals(_role)){
                         user = Manager.createManager(_username, _password, _email, _phone);
@@ -100,6 +95,7 @@ public class JdbcUserRepository implements IUserRepository {
                         user = Employee.createEmployee(_username, _password, _email, _phone);
                     }
                     user.setId(_id);
+
                     return user;
                 }
             }
@@ -111,7 +107,25 @@ public class JdbcUserRepository implements IUserRepository {
     }
 
     @Override
-    public void deleteUserById(long id) {
+    public void updateUser(User user){
+        String sql = "UPDATE users SET username = ?, password = ?, email = ?, phone = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPassword());
+            stmt.setString(3, user.getEmail());
+            stmt.setString(4, user.getPhone());
+            stmt.setLong(5, user.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException e){
+            throw new RuntimeException("Eroare la baza de date: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean deleteUserById(long id) {
         String sql = "DELETE FROM users WHERE id = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -119,14 +133,9 @@ public class JdbcUserRepository implements IUserRepository {
         {
             stmt.setLong(1, id);
             int rowsDeleted = stmt.executeUpdate();
-            if (rowsDeleted > 0) {
-                System.out.println("User has been deleted successfully");
-            }
-            else {
-                System.out.println("No user found with the ID " + id);
-            }
+            return rowsDeleted > 0;
         } catch (SQLException e){
-            System.out.println("Error" + e.getMessage());
+            throw new RuntimeException("Eroare la baza de date: " + e.getMessage());
         }
     }
 

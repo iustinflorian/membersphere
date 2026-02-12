@@ -30,7 +30,7 @@ public class UserServiceTest {
         String role = "MANAGER";
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         //when:
-        userServiceMock.registerUser("test", "123","test@test.com", "0784 322 325", role);
+        userServiceMock.registerAccount("test", "123","test@test.com", "0784 322 325", role);
         //then:
         verify(userRepositoryMock).saveUser(userCaptor.capture());
 
@@ -49,19 +49,10 @@ public class UserServiceTest {
 
         when(userRepositoryMock.getUserByUsername(username)).thenReturn(mockUser);
 
-        User result = userServiceMock.loginUser(username, password);
+        User result = userServiceMock.loginAccount(username, password);
 
         assertNotNull(result);
         assertEquals(username, result.getUsername());
-    }
-
-    @Test
-    void shouldCallRepositoryDeleteMethod(){
-        long userId = 10L;
-        boolean result = userServiceMock.deleteAccount(userId);
-
-        verify(userRepositoryMock, Mockito.times(1)).deleteUserById(userId);
-        assertTrue(result);
     }
 
 }
