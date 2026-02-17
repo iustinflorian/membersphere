@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import com.gifprojects.membersphere.repository.IUserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -22,7 +23,8 @@ public class UserServiceTest {
     @BeforeEach
     void setUp(){
         userRepositoryMock = Mockito.mock(IUserRepository.class);
-        userServiceMock = new UserService(userRepositoryMock);
+        BCryptPasswordEncoder passwordEncoderMock = Mockito.mock(BCryptPasswordEncoder.class);
+        userServiceMock = new UserService(userRepositoryMock, passwordEncoderMock);
     }
 
     @Test
@@ -36,7 +38,7 @@ public class UserServiceTest {
 
         User savedUser = userCaptor.getValue();
 
-        assertTrue(savedUser instanceof Manager, "It should be MANAGER.");
+        assertInstanceOf(Manager.class, savedUser, "It should be MANAGER.");
         assertEquals("test@test.com", savedUser.getEmail());
     }
 

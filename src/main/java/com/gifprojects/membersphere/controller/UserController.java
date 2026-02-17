@@ -36,7 +36,7 @@ public class UserController {
             userService.registerAccount(username, password, email, phone, role);
             return new ResponseEntity<>("User registered successfully!", HttpStatus.CREATED);
         } catch (Exception e){
-            return ResponseEntity.badRequest().body("Error" + e.getMessage());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
 
@@ -46,7 +46,7 @@ public class UserController {
             User user = userService.loginAccount(data.getEmail(), data.getPassword());
             return ResponseEntity.ok(user);
         } catch (Exception e){
-            return ResponseEntity.badRequest().body("Error" + e.getMessage());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
 
@@ -62,7 +62,7 @@ public class UserController {
             );
             return ResponseEntity.ok("User updated succesfully");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error" + e.getMessage());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
 
@@ -72,10 +72,8 @@ public class UserController {
             userService.deleteAccount(data.getId());
             return new ResponseEntity<>("User deleted successfully!", HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error" + e.getMessage());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
-
-
 
 }
