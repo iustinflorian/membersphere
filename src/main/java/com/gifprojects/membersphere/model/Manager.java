@@ -1,6 +1,6 @@
-package model;
+package com.gifprojects.membersphere.model;
 
-public class Manager extends User implements Displayable {
+public class Manager extends User {
 
     // this is a factory method
     private Manager(String username, String password, String email, String phone) {
@@ -10,9 +10,4 @@ public class Manager extends User implements Displayable {
         return new Manager(username, password, email, phone);
     }
     // this is a factory method
-
-    @Override
-    public void showInfo(){
-        System.out.println("Manager email: " + this.getEmail());
-    }
 }

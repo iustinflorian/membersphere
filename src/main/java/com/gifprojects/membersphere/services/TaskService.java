@@ -1,13 +1,13 @@
-package service;
+package com.gifprojects.membersphere.services;
 
-import model.Employee;
-import model.Manager;
-import model.Task;
-import model.User;
+import com.gifprojects.membersphere.model.Employee;
+import com.gifprojects.membersphere.model.Manager;
+import com.gifprojects.membersphere.model.Task;
+import com.gifprojects.membersphere.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.ITaskRepository;
-import repository.IUserRepository;
+import com.gifprojects.membersphere.repository.ITaskRepository;
+import com.gifprojects.membersphere.repository.IUserRepository;
 
 import java.util.List;
 
