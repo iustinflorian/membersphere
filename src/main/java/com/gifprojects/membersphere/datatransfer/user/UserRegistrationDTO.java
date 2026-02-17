@@ -1,4 +1,4 @@
-package com.gifprojects.membersphere.datatransfer;
+package com.gifprojects.membersphere.datatransfer.user;
 
 import lombok.Getter;
 import lombok.Setter;

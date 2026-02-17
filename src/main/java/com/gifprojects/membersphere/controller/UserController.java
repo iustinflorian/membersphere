@@ -1,9 +1,9 @@
 package com.gifprojects.membersphere.controller;
 
-import com.gifprojects.membersphere.datatransfer.UserDeleteDTO;
-import com.gifprojects.membersphere.datatransfer.UserLoginDTO;
-import com.gifprojects.membersphere.datatransfer.UserRegistrationDTO;
-import com.gifprojects.membersphere.datatransfer.UserUpdateDTO;
+import com.gifprojects.membersphere.datatransfer.user.UserDeleteDTO;
+import com.gifprojects.membersphere.datatransfer.user.UserLoginDTO;
+import com.gifprojects.membersphere.datatransfer.user.UserRegistrationDTO;
+import com.gifprojects.membersphere.datatransfer.user.UserUpdateDTO;
 import com.gifprojects.membersphere.model.User;
 import com.gifprojects.membersphere.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
