@@ -31,7 +31,12 @@ public class JdbcUserRepository implements IUserRepository {
             else {
                 stmt.setString(5, "Employee");
             }
-            stmt.executeUpdate();
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                System.out.println("User has been saved successfully");
+            } else {
+                System.out.println("User has not been saved");
+            }
         } catch (SQLException e){
             System.out.println("Error" + e.getMessage());
         }

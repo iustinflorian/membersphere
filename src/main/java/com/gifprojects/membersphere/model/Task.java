@@ -13,16 +13,17 @@ public class Task {
     private String details;
     private String source; // Manager's email
     private String destination; // Employee's email
+    private Long sourceId;
+    private Long destinationId;
     private LocalDate deadline;
     private boolean completed;
 
     private Task(String title, String details, String source, String destination, String deadline) {
         this.title = title;
         this.details = details;
-        if (!checkEmail(source)) throw new IllegalArgumentException("Invalid source email");
         this.source = source;
-        if (!checkEmail(destination)) throw new IllegalArgumentException("Invalid destination email");
         this.destination = destination;
+
         setDeadline(deadline);
     }
     public static Task createTask(String title, String details, String source, String destination, String deadline){
@@ -57,9 +58,4 @@ public class Task {
         }
     }
 */
-
-    public boolean checkEmail(String email){
-        String emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-        return email != null && email.matches(emailPattern);
-    }
 }

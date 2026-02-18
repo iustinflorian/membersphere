@@ -16,7 +16,11 @@ public class JdbcTaskRepository implements ITaskRepository{
 
     @Override
     public void saveTask(Task task) {
-        String sql = "INSERT INTO tasks (title, details, source, destination, deadline, completed) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO tasks (title, details, source, destination, source_id, destination_id, deadline, completed) " +
+                "VALUES (?, ?, ?, ?," +
+                "(SELECT id FROM users WHERE email = ?)," +
+                "(SELECT id FROM users WHERE email = ?)," +
+                "?, ?)";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql))
@@ -25,9 +29,14 @@ public class JdbcTaskRepository implements ITaskRepository{
             stmt.setString(2, task.getDetails());
             stmt.setString(3, task.getSource());
             stmt.setString(4, task.getDestination());
-            stmt.setDate(5, java.sql.Date.valueOf(task.getDeadline()));
+
+            stmt.setString(5, task.getSource());
+            stmt.setString(6, task.getDestination());
+
+            stmt.setDate(7, java.sql.Date.valueOf(task.getDeadline()));
             // JDBC doesn't directly support LocalDate. We will convert it in java.sql.Date
-            stmt.setBoolean(6, task.isCompleted());
+            stmt.setBoolean(8, task.isCompleted());
+
             int rows = stmt.executeUpdate();
             if (rows > 0) {
                 System.out.println("Task has been saved successfully");
@@ -40,14 +49,15 @@ public class JdbcTaskRepository implements ITaskRepository{
     }
 
     @Override
-    public List<Task> getTasksByEmail(String email){
+    public List<Task> getTasksById(long id){
         List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM tasks WHERE destination = ?";
+        String sql = "SELECT * FROM tasks WHERE source_id = ? OR destination_id = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setString(1, email);
-            try (ResultSet rs = stmt.executeQuery()){
+            stmt.setLong(1, id);
+            stmt.setLong(2, id);
+            try(ResultSet rs = stmt.executeQuery()){
                 while (rs.next()){
                     tasks.add(
                         Task.createTask(
@@ -58,13 +68,10 @@ public class JdbcTaskRepository implements ITaskRepository{
                                 rs.getDate("deadline").toString())
                     );
                 }
-            } catch (SQLException e){
-                System.out.println("Error" + e.getMessage()+". No tasks available.");
             }
         } catch (SQLException e){
-            System.out.println("Error" + e.getMessage());
+            System.out.println("Error" + e.getMessage()+". No tasks available.");
         }
-
         return tasks;
     }
 
@@ -106,4 +113,33 @@ public class JdbcTaskRepository implements ITaskRepository{
             System.out.println("Error" + e.getMessage());}
     }
 
+    /*
+    @Override
+    public List<Task> getTasksByEmail(String email){
+        List<Task> tasks = new ArrayList<>();
+        String sql = "SELECT * FROM tasks WHERE destination = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()){
+                while (rs.next()){
+                    tasks.add(
+                        Task.createTask(
+                                rs.getString("title"),
+                                rs.getString("details"),
+                                rs.getString("source"),
+                                rs.getString("destination"),
+                                rs.getDate("deadline").toString())
+                    );
+                }
+            } catch (SQLException e){
+                System.out.println("Error" + e.getMessage()+". No tasks available.");
+            }
+        } catch (SQLException e){
+            System.out.println("Error" + e.getMessage());
+        }
+        return tasks;
+    }
+*/
 }

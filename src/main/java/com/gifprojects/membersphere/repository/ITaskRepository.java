@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ITaskRepository {
     void saveTask(Task task);
-    List<Task> getTasksByEmail(String email);
+    List<Task> getTasksById(long id);
     void updateTask(long taskId, boolean isCompleted);
     void deleteTaskById(Long id);
 }

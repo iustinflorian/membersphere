@@ -23,18 +23,22 @@ public class TaskService {
     }
 
     public void assignTask(Task task){
-        User source = userRepository.getUserByEmail(task.getSource());
-        User destination = userRepository.getUserByEmail(task.getDestination());
+        User sourceUser = userRepository.getUserByEmail(task.getSource());
+        User destinationUser = userRepository.getUserByEmail(task.getDestination());
 
-        if (source instanceof Manager && destination instanceof Employee){
+        if (sourceUser instanceof Manager && destinationUser instanceof Employee){
             taskRepository.saveTask(task);
         } else {
             throw new RuntimeException ("Invalid task: Source must be a manager and destination must be an employee");
         }
     }
-
+/*
     public List<Task> getTasksByEmail(String email){
         return taskRepository.getTasksByEmail(email);
+    }
+*/
+    public List<Task> getTasksById(long id){
+        return taskRepository.getTasksById(id);
     }
 
     public void toggleStatus(long taskId, boolean isCompleted){
