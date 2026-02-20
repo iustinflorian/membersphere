@@ -1,5 +1,6 @@
 package com.gifprojects.membersphere.services;
 
+import com.gifprojects.membersphere.datatransfer.task.TaskAssignDTO;
 import com.gifprojects.membersphere.model.Employee;
 import com.gifprojects.membersphere.model.Manager;
 import com.gifprojects.membersphere.model.Task;
@@ -22,27 +23,39 @@ public class TaskService {
         this.userRepository = userRepository;
     }
 
-    public void assignTask(Task task){
-        User sourceUser = userRepository.getUserByEmail(task.getSource());
-        User destinationUser = userRepository.getUserByEmail(task.getDestination());
+    public boolean assignTask(TaskAssignDTO data){
+        User sourceUser = userRepository.getUserByEmail(data.getSource());
+        User destinationUser = userRepository.getUserByEmail(data.getDestination());
 
         if (sourceUser instanceof Manager && destinationUser instanceof Employee){
-            taskRepository.saveTask(task);
+            Task task = Task.createTask(
+                    data.getTitle(),
+                    data.getDetails(),
+                    data.getSource(),
+                    data.getDestination(),
+                    data.getDeadline().toString()
+            );
+            return taskRepository.saveTask(task);
         } else {
-            throw new RuntimeException ("Invalid task: Source must be a manager and destination must be an employee");
+            throw new RuntimeException ("Invalid task: source instance must be a manager and destination instance must be an employee");
         }
     }
-/*
-    public List<Task> getTasksByEmail(String email){
-        return taskRepository.getTasksByEmail(email);
-    }
-*/
-    public List<Task> getTasksById(long id){
-        return taskRepository.getTasksById(id);
+
+    public List<Task> getTasksByUserId(long userId){
+        return taskRepository.getTasksByUserId(userId);
     }
 
-    public void toggleStatus(long taskId, boolean isCompleted){
-        taskRepository.updateTask(taskId, isCompleted);
+    public boolean toggleStatus(long taskId){
+        return taskRepository.updateTask(taskId);
     }
 
+    public boolean deleteTaskById(long taskId, long requesterId) {
+        User newUser = userRepository.getUserById(requesterId);
+
+        if (newUser instanceof Manager){
+            return taskRepository.deleteTaskById(taskId);
+        } else {
+            throw new RuntimeException ("Requester must be of instance manager.");
+        }
+    }
 }

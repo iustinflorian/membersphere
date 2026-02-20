@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:3000")
 
 @RestController
-@RequestMapping("api/users/")
+@RequestMapping("api/users")
 public class UserController {
 
     private final UserService userService;
@@ -24,13 +24,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<String> register (@RequestBody UserRegistrationDTO data){
         try{
-            String username = data.getUsername();
-            String password = data.getPassword();
-            String email = data.getEmail();
-            String phone = data.getPhone();
-            String role = data.getRole();
-
-            userService.registerAccount(username, password, email, phone, role);
+            userService.registerAccount(data);
             return new ResponseEntity<>("User registered successfully!", HttpStatus.CREATED);
         } catch (Exception e){
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -47,26 +41,20 @@ public class UserController {
         }
     }
 
-    @PutMapping("/update")
+    @PatchMapping("/update")
     public ResponseEntity<?> update (@RequestBody UserUpdateDTO data){
         try{
-            userService.updateAccount(
-                data.getId(),
-                data.getEmail(),
-                data.getUsername(),
-                data.getPassword(),
-                data.getPhone()
-            );
+            userService.updateAccount(data);
             return ResponseEntity.ok("User updated succesfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> delete (@RequestBody UserDeleteDTO data){
+    @DeleteMapping("/{userId}/delete")
+    public ResponseEntity<String> delete (@PathVariable long userId, @RequestHeader("X-User-Id") long requesterId){
         try{
-            userService.deleteAccount(data.getId());
+            userService.deleteAccount(userId, requesterId);
             return new ResponseEntity<>("User deleted successfully!", HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());

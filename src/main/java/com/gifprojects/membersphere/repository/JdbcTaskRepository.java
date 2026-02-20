@@ -4,10 +4,7 @@ import com.gifprojects.membersphere.DatabaseConfig;
 import com.gifprojects.membersphere.model.Task;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +12,7 @@ import java.util.List;
 public class JdbcTaskRepository implements ITaskRepository{
 
     @Override
-    public void saveTask(Task task) {
+    public boolean saveTask(Task task) {
         String sql = "INSERT INTO tasks (title, details, source, destination, source_id, destination_id, deadline, completed) " +
                 "VALUES (?, ?, ?, ?," +
                 "(SELECT id FROM users WHERE email = ?)," +
@@ -30,26 +27,22 @@ public class JdbcTaskRepository implements ITaskRepository{
             stmt.setString(3, task.getSource());
             stmt.setString(4, task.getDestination());
 
+            // for ids
             stmt.setString(5, task.getSource());
             stmt.setString(6, task.getDestination());
 
-            stmt.setDate(7, java.sql.Date.valueOf(task.getDeadline()));
+            stmt.setDate(7, Date.valueOf(task.getDeadline()));
             // JDBC doesn't directly support LocalDate. We will convert it in java.sql.Date
             stmt.setBoolean(8, task.isCompleted());
 
-            int rows = stmt.executeUpdate();
-            if (rows > 0) {
-                System.out.println("Task has been saved successfully");
-            } else {
-                System.out.println("Task has not been saved");
-            }
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e){
-            System.out.println("Error" + e.getMessage());
+            throw new RuntimeException("Critical database error.", e);
         }
     }
 
     @Override
-    public List<Task> getTasksById(long id){
+    public List<Task> getTasksByUserId(long id){
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM tasks WHERE source_id = ? OR destination_id = ?";
 
@@ -59,87 +52,43 @@ public class JdbcTaskRepository implements ITaskRepository{
             stmt.setLong(2, id);
             try(ResultSet rs = stmt.executeQuery()){
                 while (rs.next()){
-                    tasks.add(
-                        Task.createTask(
-                                rs.getString("title"),
-                                rs.getString("details"),
-                                rs.getString("source"),
-                                rs.getString("destination"),
-                                rs.getDate("deadline").toString())
-                    );
+                    Task newTask = Task.createTask(
+                            rs.getString("title"),
+                            rs.getString("details"),
+                            rs.getString("source"),
+                            rs.getString("destination"),
+                            rs.getDate("deadline").toString());
+                    newTask.setId(rs.getLong("id"));
+                    newTask.setCompleted(rs.getBoolean("completed"));
+                    tasks.add(newTask);
                 }
             }
         } catch (SQLException e){
-            System.out.println("Error" + e.getMessage()+". No tasks available.");
+            throw new RuntimeException("Critical database error.", e);
         }
         return tasks;
     }
 
     @Override
-    public void updateTask(long taskId, boolean isCompleted) {
-        String sql = "UPDATE tasks SET completed = ? WHERE id = ?";
-
-        try (Connection conn = DatabaseConfig.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql))
-        {
-            stmt.setBoolean(1, isCompleted);
-            stmt.setLong(2, taskId);
-            int rows = stmt.executeUpdate();
-            if (rows > 0){
-                System.out.println("Task has been updated successfully");
-            } else {
-                System.out.println("Task has not been updated");
-            }
-        } catch (SQLException e){
-            System.out.println("Error" + e.getMessage()+". No tasks available.");
-        }
+    public boolean updateTask(long taskId) {
+        String sql = "UPDATE tasks SET completed = NOT completed WHERE id = ?";
+        return byTaskId(taskId, sql);
     }
 
     @Override
-    public void deleteTaskById(Long id){
+    public boolean deleteTaskById(long taskId){
         String sql = "DELETE FROM tasks WHERE id = ?";
+        return byTaskId(taskId, sql);
+    }
 
+    private boolean byTaskId(long taskId, String sql){
         try (Connection conn = DatabaseConfig.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql))
+             PreparedStatement stmt = conn.prepareStatement(sql))
         {
-            stmt.setLong(1, id);
-            int rowsDeleted = stmt.executeUpdate();
-            if (rowsDeleted > 0) {
-                System.out.println("Task has been removed successfully");
-            } else {
-                System.out.println("No task found with the ID " + id);
-            }
+            stmt.setLong(1, taskId);
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e){
-            System.out.println("Error" + e.getMessage());}
-    }
-
-    /*
-    @Override
-    public List<Task> getTasksByEmail(String email){
-        List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM tasks WHERE destination = ?";
-
-        try (Connection conn = DatabaseConfig.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setString(1, email);
-            try (ResultSet rs = stmt.executeQuery()){
-                while (rs.next()){
-                    tasks.add(
-                        Task.createTask(
-                                rs.getString("title"),
-                                rs.getString("details"),
-                                rs.getString("source"),
-                                rs.getString("destination"),
-                                rs.getDate("deadline").toString())
-                    );
-                }
-            } catch (SQLException e){
-                System.out.println("Error" + e.getMessage()+". No tasks available.");
-            }
-        } catch (SQLException e){
-            System.out.println("Error" + e.getMessage());
+            throw new RuntimeException("Critical database error.", e);
         }
-        return tasks;
     }
-*/
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 
 @RestController
-@RequestMapping("api/tasks/")
+@RequestMapping("api/tasks")
 public class TaskController {
     private final TaskService taskService;
 
@@ -22,25 +22,51 @@ public class TaskController {
     @PostMapping("/assign")
     public ResponseEntity<?> assign (@RequestBody TaskAssignDTO data){
         try {
-            Task task = Task.createTask(
-                    data.getTitle(),
-                    data.getDetails(),
-                    data.getSource(),
-                    data.getDestination(),
-                    data.getDeadline().toString()
-            );
-            taskService.assignTask(task);
-            return ResponseEntity.ok("Task assigned successfully");
+            if (taskService.assignTask(data)) {
+                return ResponseEntity.ok("Task assigned successfully.");
+            } else {
+                return ResponseEntity.badRequest().body("Task couldn't be assigned. Check source & destination emails.");
+            }
         } catch (Exception e){
             return ResponseEntity.badRequest().body("Error: "+e.getMessage());
         }
     }
 
-    @GetMapping("/mytasks")
-    public ResponseEntity<?> tasks (@RequestParam long id){
+    @GetMapping("/{userId}/mytasks")
+    public ResponseEntity<?> tasks (@PathVariable long userId){
         try{
-            List<Task> userTasks = taskService.getTasksById(id);
-            return ResponseEntity.ok(userTasks);
+            List<Task> userTasks = taskService.getTasksByUserId(userId);
+            if (!userTasks.isEmpty()){
+                return ResponseEntity.ok(userTasks);
+            } else {
+                return ResponseEntity.badRequest().body("No tasks available for user with ID: "+userId);
+            }
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Error: "+e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{taskId}/toggle")
+    public ResponseEntity<?> toggle (@PathVariable long taskId){
+        try{
+            if (taskService.toggleStatus(taskId)){
+                return ResponseEntity.ok().body("Task with ID: " + taskId + " has been updated.");
+            } else {
+                return ResponseEntity.badRequest().body("No task with ID: " + taskId);
+            }
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Error: "+e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{taskId}/delete")
+    public ResponseEntity<?> delete (@PathVariable long taskId, @RequestHeader("X-User-Id") long requesterId){
+        try{
+            if (taskService.deleteTaskById(taskId, requesterId)){
+                return ResponseEntity.ok().body("Task with ID: " + taskId + " has been deleted.");
+            } else {
+                return ResponseEntity.badRequest().body("No task with ID: " + taskId);
+            }
         } catch (Exception e){
             return ResponseEntity.badRequest().body("Error: "+e.getMessage());
         }
